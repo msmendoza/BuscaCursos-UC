@@ -41,18 +41,32 @@ def vacantes(sigla, sec, url):
 
 if __name__ == '__main__':
     # TODO
-    #       - Investigar oneclick fields en <a> tags y como obtener información
-    #           a partir de ellos (Ejemplo de ICS3153 abajo)
+    #       - Modificar los gráficos para separar las vacantes por escuelas
+    #       - Recordar QPieSlice y como es que se podían añadir PieSlices
+    #         hacia dentro del gráfico
 
-    """
-    onclick="javascript:test('./informacionVacReserva.ajax.php?
-    nrc=14135&
-    termcode=2020-1&
-    cantidad_dis=30&
-    cantidad_min=30&
-    cantidad_ocu=0&
-    nombre=Optimizaci%C3%B3n+Avanzada&
-    sigla=ICS3153&
-    seccion=1
-    ');"
-    """
+    post_data = {
+        'nrc': '14135',
+        'termcode': '2020-1',
+        'cantidad_dis': '30',
+        'cantidad_min': '30',
+        'cantidad_ocu': '0',
+        'nombre': 'Optimización+Avanzada',
+        'sigla': 'ICS3153',
+        'seccion': '1'
+    }
+
+    response = req.post(
+        url='http://buscacursos.uc.cl/informacionVacReserva.ajax.php?'
+            'nrc=14135&'
+            'termcode=2020-1&'
+            'cantidad_dis=30&'
+            'cantidad_min=30&'
+            'cantidad_ocu=0&'
+            'nombre=Optimizaci%C3%B3n+Avanzada&'
+            'sigla=ICS3153&'
+            'seccion=1',
+    )
+    soup = BeautifulSoup(markup=response.text, features='html5lib')
+    for i in [i.contents for i in soup.find_all('td')]:
+        print(i)
