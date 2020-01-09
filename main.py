@@ -17,7 +17,7 @@ from PyQt5.QtChart import *
 from datetime import datetime
 from functions import vacantes
 
-form, base = uic.loadUiType(uifile='mainwindow.ui')
+form, base = uic.loadUiType(uifile='UI files/mainwindow.ui')
 
 
 class MainWindow(form, base):
