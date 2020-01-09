@@ -44,6 +44,7 @@ if __name__ == '__main__':
     #       - Modificar los gráficos para separar las vacantes por escuelas
     #       - Recordar QPieSlice y como es que se podían añadir PieSlices
     #         hacia dentro del gráfico
+    #       - Mejor la interacción y apariencia de los gráficos.
 
     post_data = {
         'nrc': '14135',
