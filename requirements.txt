@@ -1,0 +1,22 @@
+# requirements.txt
+# Python Version: 3.8.1
+#
+# Project Name
+# Created by Mauro S. Mendoza Elguera at 07-01-20
+# Pontifical Catholic University of Chile
+#
+# Install packages: pip install -r requirements.txt
+# Outdated packages: pip list --outdated
+# Upgrade packages: pip install --upgrade pkg_name1 pkg_name2 ...
+
+# Array Computing
+numpy
+pandas
+
+# Web Scrapping
+requests
+beautifulsoup4
+html5lib
+
+# UI
+PyQt5
