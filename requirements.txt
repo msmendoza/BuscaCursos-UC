@@ -1,7 +1,7 @@
 # requirements.txt
 # Python Version: 3.8.1
 #
-# Project Name
+# BuscaCursos UC
 # Created by Mauro S. Mendoza Elguera at 07-01-20
 # Pontifical Catholic University of Chile
 #
