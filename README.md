@@ -1,2 +1,3 @@
 # BuscaCursos-UC
-Ploteo de vacantes de ramos en diversos Donut Plots 
+
+Los ramos, secciones y url se modifican en el archivo `main.py`.
