@@ -1,134 +1,104 @@
-"""
-main.py
-Python Version: 3.8.1
-
-Created by Mauro S. Mendoza Elguera at 08-01-20
-Pontifical Catholic University of Chile
-
-"""
-
-import sys
-
-from PyQt5 import uic
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
-from PyQt5.QtChart import *
 from datetime import datetime
-from functions import vacantes
+from time import time, sleep
 
-form, base = uic.loadUiType(uifile='UI files/mainwindow.ui')
+from functions import vacantes, clear
 
-
-class MainWindow(form, base):
-    def __init__(self, _ramos, _url):
-        super(base, self).__init__()
-        self.setupUi(self)
-        self.setStyleSheet(
-            ""
-            "background-color: rgb(50, 50, 50);"
-            ""
-        )
-        self.statusBar.setStyleSheet(
-            ""
-            "background-color: rgb(40, 40, 40);"
-            "color: white"
-            ""
-        )
-        self.pushButton.setStyleSheet(
-            ""
-            "background-color: rgb(90, 90, 90);"
-            "color: white"
-            ""
-        )
-
-        self.ramos = _ramos
-        self.url = _url
-
-        # Conectando botones
-        self.pushButton.clicked.connect(self.reload)
-
-        # Linkeando los gráficos
-        self.gvs = [
-            self.graphicsView_1, self.graphicsView_2,
-            self.graphicsView_3, self.graphicsView_4,
-            self.graphicsView_5, self.graphicsView_6,
-            self.graphicsView_7
-        ]
-        self.chvs = [
-            QChartView(self.graphicsView_1), QChartView(self.graphicsView_2),
-            QChartView(self.graphicsView_3), QChartView(self.graphicsView_4),
-            QChartView(self.graphicsView_5), QChartView(self.graphicsView_6),
-            QChartView(self.graphicsView_7)
-        ]
-
-        self.reload()
-
-    def reload(self):
-        """
-
-        :return:
-        """
-
-        for i in range(7):
-            sigla, sec = self.ramos[i]
-            ocupadas, libres = vacantes(sigla, sec, self.url).values()
-
-            chv = QChartView(self.gvs[i])
-
-            chv.setMinimumSize(465, 262)
-            chv.setRenderHint(QPainter.Antialiasing)
-            chv.chart().setTheme(QChart.ChartThemeLight)
-            chv.chart().layout().setContentsMargins(0, 0, 0, 0)
-            chv.chart().setBackgroundRoundness(0)
-
-            scene = chv.scene()
-            text = scene.addText(f"{sigla}-{sec}", QFont('Helvetica', 20, 75))
-            text.setDefaultTextColor(Qt.white)
-            text.setPos(111, 119)
-
-            slice_l = QPieSlice(f'V. Libres:   {libres}', libres)
-            slice_l.setColor(QColor('#595959'))
-            # slice_l.setColor(QColor('white'))
-            slice_l.setBorderWidth(4)
-            slice_l.setBorderColor(QColor('black'))
-            slice_o = QPieSlice(f'V. Ocupadas: {ocupadas}', ocupadas)
-            slice_o.setColor(QColor('#990000'))
-            slice_o.setBorderWidth(4)
-            slice_o.setBorderColor(QColor('black'))
-
-            donut = QPieSeries()
-            donut.append([slice_l, slice_o])
-            donut.setHoleSize(0.65)
-            donut.setPieSize(0.9)
-
-            chv.chart().addSeries(donut)
-            chart = chv.chart()
-            chart.setBackgroundBrush(QBrush(QColor('black')))
-            legend = chart.legend()
-            legend.setLabelColor(QColor('white'))
-            legend.setAlignment(Qt.AlignRight)
-
-            self.chvs[i] = chv
-
-        # Actualiza el msj en la statusbar
-        self.statusBar.showMessage(
-            f"Done! {datetime.now().strftime('%d/%m/%Y - %H:%M:%S')}"
-        )
-        self.show()
-
-        for i in range(7):
-            self.gvs[i] = QGraphicsView()
+base_url = 'http://buscacursos.uc.cl'
+ramos = [
+    {'sigla': 'CAR1500',
+     'sec': 1,
+     'url': f"{base_url}/informacionVacReserva.ajax.php"
+            "?nrc=17865"
+            "&termcode=2020-2"
+            "&cantidad_dis=9"
+            "&cantidad_min=12"
+            "&cantidad_ocu=3"
+            "&nombre=Entrenamiento+en+Presentaciones+Orales+Efectivas"
+            "&sigla=CAR1500"
+            "&seccion=1"},
+    {'sigla': 'ICS2122',
+     'sec': 1,
+     'url': f"{base_url}/informacionVacReserva.ajax.php"
+            "?nrc=16922"
+            f"&termcode=2020-2"
+            "&cantidad_dis=100"
+            "&cantidad_min=100"
+            "&cantidad_ocu=0"
+            "&nombre=Taller+de+Investigaci%C3%B3n+Operativa"
+            "+%28Capstone%29"
+            f"&sigla=ICS2122"
+            f"&seccion=1"},
+    {'sigla': 'ICS2813',
+     'sec': 1,
+     'url': f"{base_url}/informacionVacReserva.ajax.php"
+            "?nrc=14352"
+            "&termcode=2020-2"
+            "&cantidad_dis=127"
+            "&cantidad_min=130"
+            "&cantidad_ocu=3"
+            "&nombre=Organizaci%C3%B3n+y+Comportamiento+en+la+Empresa"
+            "&sigla=ICS2813"
+            "&seccion=1"},
+    {'sigla': 'ICS3105',
+     'sec': 1,
+     'url': f"{base_url}/informacionVacReserva.ajax.php"
+            "?nrc=20437"
+            "&termcode=2020-2"
+            "&cantidad_dis=39"
+            "&cantidad_min=40"
+            "&cantidad_ocu=1"
+            "&nombre=Optimizaci%C3%B3n+Din%C3%A1mica"
+            "&sigla=ICS3105"
+            "&seccion=1"},
+    {'sigla': 'ICS3413',
+     'sec': 1,
+     'url': f"{base_url}/informacionVacReserva.ajax.php"
+            "?nrc=13579"
+            "&termcode=2020-2"
+            "&cantidad_dis=148"
+            "&cantidad_min=150"
+            "&cantidad_ocu=2"
+            "&nombre=Finanzas"
+            "&sigla=ICS3413"
+            "&seccion=1"},
+    {'sigla': 'LET056E',
+     'sec': 1,
+     'url': f"{base_url}/informacionVacReserva.ajax.php"
+            "?nrc=12426"
+            "&termcode=2020-2"
+            "&cantidad_dis=30"
+            "&cantidad_min=30"
+            "&cantidad_ocu=0"
+            "&nombre=Introduccion+a+la+Lengua+y+Cultura+Catalana"
+            "&sigla=LET056E"
+            "&seccion=1"},
+    {'sigla': 'LET218E',
+     'sec': 1,
+     'url': f"{base_url}/informacionVacReserva.ajax.php"
+            "?nrc=20536"
+            "&termcode=2020-2"
+            "&cantidad_dis=27"
+            "&cantidad_min=30"
+            "&cantidad_ocu=3"
+            "&nombre=Literatura+Japonesa"
+            "&sigla=LET218E"
+            "&seccion=1"}
+]
 
 
-if __name__ == '__main__':
-    ramos = {0: ('DPT6900', 1), 1: ('IIC2613', 1), 2: ('IIC2764', 1),
-             3: ('ICS3153', 1), 4: ('ICS3151', 1), 5: ('ICS2613', 2),
-             6: ('IIC2733', 1)}
-    url = 'http://buscacursos.uc.cl/?cxml_semestre=2020-1&' \
-          'cxml_sigla={}#resultados'
+def run():
+    clear()
 
-    app = QApplication(sys.argv)
-    mw = MainWindow(ramos, url)
+    print(f"\n\033[1m{datetime.now().strftime('%H:%M:%S')}\033[0m\n")
+    st = time()
+    for ramo in ramos:
+        sigla, sec, url = ramo.values()
+        vxe_ramo = vacantes(url)
+        print(f"\033[1m{sigla}-{sec}\033[0m")
+        print(vxe_ramo, end='\n' * 2)
+    print(f"Finished! ({time() - st:3.1f} sec)")
 
-    sys.exit(app.exec_())
+
+while True:
+    run()
+    sleep(30)

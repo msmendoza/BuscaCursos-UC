@@ -20,4 +20,4 @@ html5lib
 lxml
 
 # UI
-PyQt5
+# PyQt5
