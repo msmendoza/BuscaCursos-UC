@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 
 
 def clear():
+    """Para realizar un 'Clear Screen' en la Terminal"""
     _ = system('cls') if name == 'cls' else system('clear')
 
 
