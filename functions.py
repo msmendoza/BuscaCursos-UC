@@ -1,4 +1,6 @@
+from datetime import datetime
 from os import system, name
+from time import time, sleep
 
 import pandas as pd
 import requests as req
@@ -10,31 +12,35 @@ def clear():
     _ = system('cls') if name == 'cls' else system('clear')
 
 
-def vacantes(url_):
+def vacantes(sem, nrc, sigla, sec):
     """Entrega las vacantes libres y ocupadas de determinado ramo UC.
 
     Parameters
     ----------
-    url_ : str
-      URL para la POST request de determinado ramo (ej:
-      http://buscacursos.uc.cl/informacionVacReserva.ajax.php
-      ?nrc=20437
-      &termcode=2020-2
-      &cantidad_dis=39
-      &cantidad_min=40
-      &cantidad_ocu=1
-      &nombre=Optimizaci%C3%B3n+Din%C3%A1mica
-      &sigla=ICS3105
-      &seccion=1).
+    sem : str
+      Semestre en el que se toman ramos (ej: '2020-2')
+    nrc : int
+      NRC del curso (ej: 20437)
+    sigla : str
+      Sigla del curso (ej: 'ICS3105')
+    sec : int
+      Sección del curso (ej: 1)
+
     Returns
     -------
-    pd.DataFrame
-      DataFrame con las vacantes ocupadas y desocupadas por escuelas
-      del ramo.
+    (pd.DataFrame, str)
+      DataFrame con las vacantes ocupadas y disponible por escuelas
+      del ramo + el nombre del ramo.
     """
+    base_url = 'http://buscacursos.uc.cl'
+    url_ = f"{base_url}/informacionVacReserva.ajax.php" \
+           f"?nrc={nrc}" \
+           f"&termcode={sem}&sigla={sigla}&seccion={sec}"
+    # print(url_)
     response = req.post(url=url_)
     soup = BeautifulSoup(markup=response.text, features='html5lib')
     info = soup.find('table').find_all('td')
+    name_ = info[5].text.strip()  # Nombre del ramo
     # Eliminamos la info no relativa a la info de las 'Escuelas'
     info = info[18:-3]
     # Eliminamos espacios para los diferentes campos
@@ -43,15 +49,72 @@ def vacantes(url_):
     info = [info[9 * i:9 * (i + 1)] for i in range(len(info) // 9)]
     # Llenamos un df con la información
     vacxesc = {}
-    for esc, _, _, _, _, _, _, oc, disp in info:
-        if oc == disp == '0':
-            continue
-        vacxesc.update({esc: (int(oc) + int(disp), oc, disp)})
+    if len(info) == 1:  # Para controlar cursos sin escuelas particular
+        response = req.get(f"{base_url}/?cxml_semestre={sem}"
+                           f"&cxml_sigla={sigla}#resultados")
+        soup = BeautifulSoup(markup=response.text, features='html5lib')
+        info = soup.find_all('td')
+        info = [i.text.strip() for i in info][181:]  # 181: index 1st nrc
+        info = [info[21 * i:21 * (i + 1)] for i in range(len(info) // 21)]
+        info = info[sec - 1]  # Extraemos solo la info de la sección pedida
+        name_ = info[9]
+        T = int(info[13])
+        disp = int(info[14])
+        oc = T - disp
+        esc = 'Vacantes Libres'
+        vacxesc.update({esc: (oc + disp, oc, disp)})
+    else:
+        for esc, _, _, _, _, _, _, oc, disp in info:
+            if oc == disp == '0':
+                continue
+            esc = esc[5:] if '-' in esc else esc
+            vacxesc.update({esc: (int(oc) + int(disp), oc, disp)})
     df = pd.DataFrame(vacxesc).T
     df.rename(columns={0: 'T', 1: 'O', 2: 'D'}, inplace=True)
 
-    return df
+    return df, name_
+
+
+def run(sem, ramos, interval=60):
+    """Inicia la consulta de vacantes.
+
+    Parameters
+    ----------
+    sem : str
+      Semestre en el que se toman ramos (ej: '2020-2')
+    ramos : list
+      Lista de diccionarios que contienen información de los ramos a
+      consultar (ej: [{'nrc': 20437, 'sigla': 'ICS3105', 'sec': 1}, ...])
+    interval : int
+      Intervalo de tiempo en segundos
+    """
+    while True:
+        clear()
+        print(f"\n\033[1m{datetime.now().strftime('%H:%M:%S')}\033[0m\n")
+        st = time()
+        for ramo in ramos:
+            nrc, sigla, seccion = ramo.values()
+            vxe, nombre = vacantes(sem, nrc, sigla, seccion)
+            print(f"\033[1m{sigla}-{seccion}\033[0m: {nombre}")
+            print(vxe, end='\n' * 2)
+        print(f"Finished! ({time() - st:3.1f} sec)")
+
+        sleep(interval)
 
 
 if __name__ == '__main__':
-    pass
+    semestre = '2020-2'
+    ramos = [
+        {'nrc': 17865, 'sigla': 'CAR1500', 'sec': 1},
+        {'nrc': 16922, 'sigla': 'ICS2122', 'sec': 1},
+        {'nrc': 14352, 'sigla': 'ICS2813', 'sec': 1},
+        {'nrc': 20437, 'sigla': 'ICS3105', 'sec': 1},
+        {'nrc': 13579, 'sigla': 'ICS3413', 'sec': 1},
+        {'nrc': 12426, 'sigla': 'LET056E', 'sec': 1},
+        {'nrc': 20536, 'sigla': 'LET218E', 'sec': 1}
+    ]
+    for ramo in ramos:
+        nrc, sigla, seccion = ramo.values()
+        vxe, nombre = vacantes(semestre, nrc, sigla, seccion)
+        print(f"{sigla}-{seccion}: {nombre}")
+        print(vxe)
