@@ -12,6 +12,6 @@
 el parámetro ```interval``` en el llamado a la función ```run()``` en la última
 línea de ```main.py```.
 
-Preview:
+**Preview:**
 
 ![Screenshot_!](/Screenshots/Screenshot_1.jpg)
