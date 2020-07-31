@@ -16,7 +16,8 @@ colors = {
     'background': '#250000',
     'text': 'white'
 }
-siglas = [r['sigla'] for r in ramos]  # Para usar en el Output de los callbacks
+# Para usar en el Output de los callbacks
+sigxsec = [f"{r['sigla']}-{r['sec']}" for r in ramos]
 
 n_rows = len(ramos) // 2 if len(ramos) % 2 == 0 else len(ramos) // 2 + 1
 rows = [[] for _ in range(n_rows)]
@@ -51,7 +52,7 @@ for ramo in ramos:
                 ],
                     style={'textAlign': 'center',
                            'color': colors['text']}),
-                dcc.Graph(id=f'{sigla}', figure=fig, animate=True)
+                dcc.Graph(id=f'{sigla}-{sec}', figure=fig, animate=True)
             ], className="six columns")
         )
         break
@@ -71,7 +72,7 @@ app.layout = html.Div(
     children=children)
 
 
-@app.callback([Output(s, 'figure') for s in siglas],
+@app.callback([Output(f'{ss}', 'figure') for ss in sigxsec],
               [Input('graph-update', 'n_intervals')])
 def update_graphs(_):
     """
