@@ -64,13 +64,19 @@ def vacantes(sem, nrc, sigla, sec):
         esc = 'Vacantes Libres'
         vacxesc.update({esc: (oc + disp, oc, disp)})
     else:
-        for esc, _, prog, _, _, _, _, oc, disp in info:
+        for esc, _, prog, conc, _, _, _, oc, disp in info:
+            esc = esc[5:] if '-' in esc else esc
+            if esc in vacxesc:
+                conc:str
+                conc = conc.split('-')[1]
+                conc = conc.replace('Certificado Académico en', 'CA')
+                vacxesc.update({conc: (int(oc) + int(disp), oc, disp)})
+                continue
             if oc == disp == '0':
                 continue
-            esc = esc[5:] if '-' in esc else esc
             if esc:
                 vacxesc.update({esc: (int(oc) + int(disp), oc, disp)})
-            else:
+            else:  # Para los casos donde NO hay escuelas (Sin Vac. Libres)
                 prog = prog.split('-')[1]
                 vacxesc.update({prog: (int(oc) + int(disp), oc, disp)})
     df = pd.DataFrame(vacxesc).T
