@@ -6,6 +6,7 @@ beautifulsoup4
 Brotli
 click
 dash
+gunicorn
 # dash-core-components==1.10.2
 # dash-html-components==1.0.3
 # dash-renderer==1.6.0
