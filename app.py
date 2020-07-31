@@ -64,7 +64,7 @@ children = [
                    style={'textAlign': 'center',
                           'color': colors['text'],
                           'marginTop': 25})
-           ] + rows + [dcc.Interval(id='graph-update', interval=5 * 1000)]
+           ] + rows + [dcc.Interval(id='graph-update', interval=30 * 1000)]
 
 app.layout = html.Div(
     style={'backgroundColor': colors['background']},
