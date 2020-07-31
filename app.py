@@ -8,7 +8,9 @@ from functions import vacantes, preprocessing
 from main import semestre, ramos
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app = dash.Dash(__name__,
+                title='Vacantes BuscaCursos',
+                external_stylesheets=external_stylesheets)
 server = app.server
 colors = {
     'background': '#250000',
