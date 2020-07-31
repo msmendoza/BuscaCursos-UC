@@ -75,6 +75,29 @@ def vacantes(sem, nrc, sigla, sec):
     return df, name_
 
 
+def preprocessing(df):
+    """Prepara los datos para ser usado por la librería Dash
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+      Output de la función vacantes()
+
+    Returns
+    -------
+    pd.DataFrame
+      DataFrame listo para ser usado por px.Sunburst()
+    """
+    columns = ['Vacantes', 'Escuela', 'T_Vacante']
+    data = []
+    for tup in df.itertuples():
+        esc, _, oc, disp = tup
+
+        data.append([disp, esc, 'Disponible'])
+        data.append([oc, esc, 'Ocupada'])
+    return pd.DataFrame(data, columns=columns)
+
+
 def run(sem, ramos, interval=60):
     """Inicia la consulta de vacantes.
 
@@ -105,16 +128,17 @@ def run(sem, ramos, interval=60):
 if __name__ == '__main__':
     semestre = '2020-2'
     ramos = [
-        {'nrc': 17865, 'sigla': 'CAR1500', 'sec': 1},
-        {'nrc': 16922, 'sigla': 'ICS2122', 'sec': 1},
-        {'nrc': 14352, 'sigla': 'ICS2813', 'sec': 1},
-        {'nrc': 20437, 'sigla': 'ICS3105', 'sec': 1},
-        {'nrc': 13579, 'sigla': 'ICS3413', 'sec': 1},
+        # {'nrc': 17865, 'sigla': 'CAR1500', 'sec': 1},
+        # {'nrc': 16922, 'sigla': 'ICS2122', 'sec': 1},
+        # {'nrc': 14352, 'sigla': 'ICS2813', 'sec': 1},
+        # {'nrc': 20437, 'sigla': 'ICS3105', 'sec': 1},
+        # {'nrc': 13579, 'sigla': 'ICS3413', 'sec': 1},
         {'nrc': 12426, 'sigla': 'LET056E', 'sec': 1},
-        {'nrc': 20536, 'sigla': 'LET218E', 'sec': 1}
+        # {'nrc': 20536, 'sigla': 'LET218E', 'sec': 1}
     ]
     for ramo in ramos:
         nrc, sigla, seccion = ramo.values()
         vxe, nombre = vacantes(semestre, nrc, sigla, seccion)
         print(f"{sigla}-{seccion}: {nombre}")
         print(vxe)
+        print(preprocessing(vxe))
