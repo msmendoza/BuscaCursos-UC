@@ -64,11 +64,15 @@ def vacantes(sem, nrc, sigla, sec):
         esc = 'Vacantes Libres'
         vacxesc.update({esc: (oc + disp, oc, disp)})
     else:
-        for esc, _, _, _, _, _, _, oc, disp in info:
+        for esc, _, prog, _, _, _, _, oc, disp in info:
             if oc == disp == '0':
                 continue
             esc = esc[5:] if '-' in esc else esc
-            vacxesc.update({esc: (int(oc) + int(disp), oc, disp)})
+            if esc:
+                vacxesc.update({esc: (int(oc) + int(disp), oc, disp)})
+            else:
+                prog = prog.split('-')[1]
+                vacxesc.update({prog: (int(oc) + int(disp), oc, disp)})
     df = pd.DataFrame(vacxesc).T
     df.rename(columns={0: 'T', 1: 'O', 2: 'D'}, inplace=True)
 
@@ -128,13 +132,7 @@ def run(sem, ramos, interval=60):
 if __name__ == '__main__':
     semestre = '2020-2'
     ramos = [
-        # {'nrc': 17865, 'sigla': 'CAR1500', 'sec': 1},
-        # {'nrc': 16922, 'sigla': 'ICS2122', 'sec': 1},
-        # {'nrc': 14352, 'sigla': 'ICS2813', 'sec': 1},
-        # {'nrc': 20437, 'sigla': 'ICS3105', 'sec': 1},
-        # {'nrc': 13579, 'sigla': 'ICS3413', 'sec': 1},
-        {'nrc': 12426, 'sigla': 'LET056E', 'sec': 1},
-        # {'nrc': 20536, 'sigla': 'LET218E', 'sec': 1}
+        {'nrc': 14518, 'sigla': 'GEO111', 'sec': 1}
     ]
     for ramo in ramos:
         nrc, sigla, seccion = ramo.values()
