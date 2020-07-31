@@ -98,7 +98,7 @@ def preprocessing(df):
         esc, _, oc, disp = tup
 
         data.append([disp, esc, 'Disponible'])
-        data.append([oc, esc, 'Ocupada'])
+        data.append([oc, esc, 'Ocupado'])
     return pd.DataFrame(data, columns=columns)
 
 

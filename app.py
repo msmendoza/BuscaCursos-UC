@@ -33,7 +33,7 @@ for ramo in ramos:
             values='Vacantes',
             color='T_Vacante',
             color_discrete_map={'Disponible': 'Lavender',
-                                'Ocupada': 'Firebrick'},
+                                'Ocupado': 'Firebrick'},
         )
         fig.update_layout(margin=dict(t=30, b=30),
                           plot_bgcolor=colors['background'],
@@ -91,7 +91,7 @@ def update_graphs(_):
             values='Vacantes',
             color='T_Vacante',
             color_discrete_map={'Disponible': 'Lavender',
-                                'Ocupada': 'Firebrick'}
+                                'Ocupado': 'Firebrick'}
         )
         fig.update_layout(margin=dict(t=30, b=30),
                           plot_bgcolor=colors['background'],
