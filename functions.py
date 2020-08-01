@@ -49,14 +49,16 @@ def vacantes(sem, nrc, sigla, sec):
     info = [info[9 * i:9 * (i + 1)] for i in range(len(info) // 9)]
     # Llenamos un df con la información
     vacxesc = {}
-    if len(info) == 1:  # Para controlar cursos sin escuelas particular
+    if len(info) == 1:  # Para controlar cursos solo con Vacantes Libres
         response = req.get(f"{base_url}/?cxml_semestre={sem}"
                            f"&cxml_sigla={sigla}#resultados")
         soup = BeautifulSoup(markup=response.text, features='html5lib')
         info = soup.find_all('td')
-        info = [i.text.strip() for i in info][181:]  # 181: index 1st nrc
-        info = [info[21 * i:21 * (i + 1)] for i in range(len(info) // 21)]
-        info = info[sec - 1]  # Extraemos solo la info de la sección pedida
+        info = [i.text.strip() for i in info]
+        nrc_idx = info.index(f'{nrc}')
+        info = info[nrc_idx: nrc_idx + 21]
+        # info = [info[21 * i:21 * (i + 1)] for i in range(len(info) // 21)]
+        # info = info[sec - 1]  # Extraemos solo la info de la sección pedida
         name_ = info[9]
         T = int(info[13])
         disp = int(info[14])
@@ -66,19 +68,19 @@ def vacantes(sem, nrc, sigla, sec):
     else:
         for esc, _, prog, conc, _, _, _, oc, disp in info:
             esc = esc[5:] if '-' in esc else esc
+            if oc == disp == '0':
+                continue
+            if prog:  # Para los casos donde NO hay escuelas (Sin Vac. Libres)
+                prog = prog.split('-')[1]
+                vacxesc.update({prog: (int(oc) + int(disp), oc, disp)})
+                continue
             if esc in vacxesc:
-                conc:str
                 conc = conc.split('-')[1]
                 conc = conc.replace('Certificado Académico en', 'CA')
                 vacxesc.update({conc: (int(oc) + int(disp), oc, disp)})
                 continue
-            if oc == disp == '0':
-                continue
             if esc:
                 vacxesc.update({esc: (int(oc) + int(disp), oc, disp)})
-            else:  # Para los casos donde NO hay escuelas (Sin Vac. Libres)
-                prog = prog.split('-')[1]
-                vacxesc.update({prog: (int(oc) + int(disp), oc, disp)})
     df = pd.DataFrame(vacxesc).T
     df.rename(columns={0: 'T', 1: 'O', 2: 'D'}, inplace=True)
 
@@ -138,11 +140,12 @@ def run(sem, ramos, interval=60):
 if __name__ == '__main__':
     semestre = '2020-2'
     ramos = [
-        {'nrc': 14518, 'sigla': 'GEO111', 'sec': 1}
+        # {'nrc': 20437, 'sigla': 'ICS3105', 'sec': 1},
+        {'nrc': 11114, 'sigla': 'DPT5502', 'sec': 3}
     ]
     for ramo in ramos:
         nrc, sigla, seccion = ramo.values()
         vxe, nombre = vacantes(semestre, nrc, sigla, seccion)
         print(f"{sigla}-{seccion}: {nombre}")
         print(vxe)
-        print(preprocessing(vxe))
+        # print(preprocessing(vxe))

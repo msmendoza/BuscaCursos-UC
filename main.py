@@ -2,26 +2,28 @@ from functions import run
 
 semestre = '2020-2'
 ramos = [
+    {'nrc': 20437, 'sigla': 'ICS3105', 'sec': 1},
+    {'nrc': 11114, 'sigla': 'DPT5502', 'sec': 3},
+    {'nrc': 10270, 'sigla': 'DPT9330', 'sec': 1},
+    {'nrc': 24618, 'sigla': 'LET061I', 'sec': 1},
     # Major/Título
-    {'nrc': 20437, 'sigla': 'ICS3105', 'sec': 1},  # Opti Dinámica
     # A
-    {'nrc': 13579, 'sigla': 'ICS3413', 'sec': 1},  # Finanzas
+    # {'nrc': 13579, 'sigla': 'ICS3413', 'sec': 1},  # Finanzas
     # B
-    {'nrc': 12357, 'sigla': 'IIC2133', 'sec': 1},  # EDD 1
-    {'nrc': 24358, 'sigla': 'IIC2133', 'sec': 2},  # EDD 2
+    # {'nrc': 12357, 'sigla': 'IIC2133', 'sec': 1},  # EDD 1
+    # {'nrc': 24358, 'sigla': 'IIC2133', 'sec': 2},  # EDD 2
 
     # OFGs
     # A
-    {'nrc': 17865, 'sigla': 'CAR1500', 'sec': 1},  # Ent Presentaciones O.
-    {'nrc': 12426, 'sigla': 'LET056E', 'sec': 1},  # Catalan
-    {'nrc': 20536, 'sigla': 'LET218E', 'sec': 1},  # Lit Japonesa
+    # {'nrc': 17865, 'sigla': 'CAR1500', 'sec': 1},  # Ent Presentaciones O.
+    # {'nrc': 12426, 'sigla': 'LET056E', 'sec': 1},  # Catalan
+    # {'nrc': 20536, 'sigla': 'LET218E', 'sec': 1},  # Lit Japonesa
 
     # B
-    {'nrc': 13477, 'sigla': 'CAR0004', 'sec': 1},  # Taller Tutores
-    {'nrc': 14518, 'sigla': 'GEO111', 'sec': 1},  # Geografía de Chile: E y S
+    # {'nrc': 13477, 'sigla': 'CAR0004', 'sec': 1},  # Taller Tutores
+    # {'nrc': 14518, 'sigla': 'GEO111', 'sec': 1},  # Geografía de Chile: E y S
 
     # C
-
 
     # Ya tomado
     # {'nrc': 15993, 'sigla': 'MUC1000', 'sec': 1},
