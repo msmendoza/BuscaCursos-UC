@@ -5,7 +5,7 @@ import plotly.express as px
 from dash.dependencies import Output, Input
 
 from functions import vacantes, preprocessing
-from main import semestre, ramos
+from courses import semestre, ramos
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__,
@@ -82,7 +82,6 @@ def update_graphs(_):
     list
       Lista de figuras que se actualizarán en la página
     """
-    # print('Updating!')
     figures = []
     for ramo in ramos:
         nrc, sigla, sec = ramo.values()
